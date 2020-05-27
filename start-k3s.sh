@@ -32,7 +32,10 @@ function runDocker {
     done
 }
 
-K3S_NAME=$(hostname)
+if [ -z "${K3S_NAME}" ]; then
+    K3S_NAME=$(hostname)
+fi
+
 K3S_ARGS=( \
     --no-deploy=traefik \
     --docker \
@@ -60,7 +63,7 @@ function waitForKubeconfig {
     done
 
     echo "${cfg}" > /tmp/kubeconfig
-    KUBE_CONFIG=/kubeconfig
+    KUBE_CONFIG=/build/kubeconfig
     if [ ! -z "${K3S_KUBECONFIG_OUTPUT_DIR}" ]; then
         if [ ! -d "${K3S_KUBECONFIG_OUTPUT_DIR}" ]; then
             mkdir -p ${K3S_KUBECONFIG_OUTPUT_DIR}
