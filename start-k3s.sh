@@ -60,7 +60,15 @@ function waitForKubeconfig {
     done
 
     echo "${cfg}" > /tmp/kubeconfig
-    mv /tmp/kubeconfig /kubeconfig
+    KUBE_CONFIG=/kubeconfig
+    if [ ! -z "${K3S_KUBECONFIG_OUTPUT_DIR}" ]; then
+        if [ ! -d "${K3S_KUBECONFIG_OUTPUT_DIR}" ]; then
+            mkdir -p ${K3S_KUBECONFIG_OUTPUT_DIR}
+        fi
+        KUBE_CONFIG=${K3S_KUBECONFIG_OUTPUT_DIR}/kubeconfig
+    fi
+
+    mv /tmp/kubeconfig ${KUBE_CONFIG}
 }
 
 
@@ -73,7 +81,7 @@ runDocker
 runServer
 waitForKubeconfig
 
-touch /minikube_startup_complete
+touch /k3s_startup_complete
 echo Kubeconfig is ready
 
 # Put the tail of logs in the foreground to keep the container running
