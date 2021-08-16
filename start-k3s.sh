@@ -36,6 +36,9 @@ if [ -z "${K3S_NAME}" ]; then
     K3S_NAME=$(hostname)
 fi
 
+# Make sure we can run inside a Kubernetes cluster without breaking out of the container
+unset KUBERNETES_PORT KUBERNETES_PORT_443_TCP KUBERNETES_PORT_443_TCP_ADDR KUBERNETES_PORT_443_TCP_PORT KUBERNETES_PORT_443_TCP_PROTO KUBERNETES_SERVICE_HOST KUBERNETES_SERVICE_PORT KUBERNETES_SERVICE_PORT_HTTPS
+
 K3S_ARGS=( \
     --no-deploy=traefik \
     --docker \
