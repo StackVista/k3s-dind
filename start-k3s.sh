@@ -40,6 +40,7 @@ K3S_ARGS=( \
     --no-deploy=traefik \
     --docker \
     --https-listen-port=${K3S_API_PORT:-8443} \
+    --kube-proxy-arg=conntrack-max-per-core=0 \
     --node-name=${K3S_NAME} \
     --tls-san=${K3S_NAME} \
 )
