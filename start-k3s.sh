@@ -41,7 +41,7 @@ unset KUBERNETES_PORT KUBERNETES_PORT_443_TCP KUBERNETES_PORT_443_TCP_ADDR KUBER
 
 if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   echo "Setting up for cgroup v2"
-  
+
   # We are on cgroup v2. Create a nested group for the current shell.
   mkdir -p /sys/fs/cgroup/init
   echo 0 > /sys/fs/cgroup/init/cgroup.procs

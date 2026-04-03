@@ -39,6 +39,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # Standard tag for the branch (e.g., 'main' or 'pr-15')
+            type=ref,event=branch
+            # Unique tag for every push using the short SHA (e.g., 'sha-ad1234f')
+            type=sha,format=short,prefix=sha-
+            # Optional: tag for PRs specifically
+            type=ref,event=pr
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
