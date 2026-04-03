@@ -39,12 +39,31 @@ fi
 # Make sure we can run inside a Kubernetes cluster without breaking out of the container
 unset KUBERNETES_PORT KUBERNETES_PORT_443_TCP KUBERNETES_PORT_443_TCP_ADDR KUBERNETES_PORT_443_TCP_PORT KUBERNETES_PORT_443_TCP_PROTO KUBERNETES_SERVICE_HOST KUBERNETES_SERVICE_PORT KUBERNETES_SERVICE_PORT_HTTPS
 
+if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
+  echo "Setting up for cgroup v2"
+  
+  # We are on cgroup v2. Create a nested group for the current shell.
+  mkdir -p /sys/fs/cgroup/init
+  echo 0 > /sys/fs/cgroup/init/cgroup.procs
+
+  # Delegate controllers to the child groups
+  for mock in /sys/fs/cgroup/*.subtree_control; do
+    echo "+cpu +cpuset +io +memory +pids" > "$mock" 2>/dev/null || true
+  done
+fi
+
 K3S_ARGS=( \
-    --disable traefik \
-    --docker \
-    --https-listen-port=${K3S_API_PORT:-8443} \
-    --node-name=${K3S_NAME} \
-    --tls-san=${K3S_NAME} \
+   --disable traefik \
+   --docker \
+   --https-listen-port=${K3S_API_PORT:-8443} \
+   --node-name=${K3S_NAME} \
+   --tls-san=${K3S_NAME} \
+   --tls-san localhost \
+   --tls-san 127.0.0.1 \
+   --kubelet-arg="cgroup-driver=cgroupfs" \
+   --kubelet-arg="eviction-hard=imagefs.available<1%,nodefs.available<1%" \
+   --kubelet-arg="kube-reserved=cpu=0,memory=0" \
+   --kubelet-arg="system-reserved=cpu=0,memory=0" \
 )
 
 function runServer {
