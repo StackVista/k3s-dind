@@ -42,6 +42,8 @@ jobs:
           tags: |
             # Standard tag for the branch (e.g., 'main' or 'pr-15')
             type=ref,event=branch
+            # Standard tag for the tag (e.g., 'v1.2.3')
+            type=ref,event=tag
             # Unique tag for every push using the short SHA (e.g., 'sha-ad1234f')
             type=sha,format=short,prefix=sha-
             # Optional: tag for PRs specifically
